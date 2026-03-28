@@ -1,0 +1,24 @@
+public class AccountTriggerHandler implements ITriggerHandler {
+
+    // Only implement the events you need — others are no-ops
+    public void beforeInsert(List<SObject> newList) {
+        List<Account> accounts = (List<Account>) newList;
+        for (Account acc : accounts) {
+            if (String.isBlank(acc.AccountNumber)) {
+                acc.AccountNumber = 'ACC-' + System.now().getTime();
+            }
+        }
+    }
+
+    public void afterUpdate(List<SObject> newList, Map<Id, SObject> oldMap) {
+
+           System.debug('afterUpdate executed');
+    }
+
+    // No-op stubs for unused events
+    public void beforeUpdate(List<SObject> n, Map<Id,SObject> o) {}
+    public void beforeDelete(List<SObject> o) {}
+    public void afterInsert(List<SObject> n, Map<Id,SObject> m) {}
+    public void afterDelete(List<SObject> o) {}
+    public void afterUndelete(List<SObject> n) {}
+}
