@@ -1,0 +1,27 @@
+Concepts convered in this framwork:
+
+1) Abstraction (Hiding complexity behind a simple contract)
+Abstraction means: show only what is necessary, hide everything else. The ITriggerHandler interface is pure abstraction — it shows 
+the dispatcher WHAT methods exist, but completely hides HOW they work.
+
+2) Polymorphism (One variable, many possible real objects)
+Polymorphism literally means "many forms". The dispatcher holds a variable of type ITriggerHandler — but the actual object inside 
+it can be ANY class that implements the interface. Same method call, different behaviour depending on which object is really there.
+
+3) Encapsulation (Keeping each class's logic private and self-contained)
+Encapsulation means bundling data and logic together inside a class, and keeping the internals private. Each handler class owns its 
+own logic — the dispatcher never reaches inside it. The handler decides what to expose (the interface methods) and hides the rest.
+
+4) Concepts Related to this statment : TriggerDispatcher.run( new AccountTriggerHandler() ) 
+
+a) new AccountTriggerHandler() — creates an object in memory
+Apex allocates memory and builds a fresh AccountTriggerHandler object. It has all 7 methods ready inside it.
+
+b) Apex checks: "can I pass this to a parameter of type ITriggerHandler?"
+It looks at AccountTriggerHandler's declaration and sees implements ITriggerHandler. Answer: yes. The object is accepted.
+
+c) Inside run(), the variable handler now holds your AccountTriggerHandler
+The dispatcher only knows it has "some ITriggerHandler". It doesn't know the real class name. It doesn't need to.
+
+d) When dispatcher calls handler.beforeInsert() — AccountTriggerHandler's version runs
+This is called polymorphism — the dispatcher calls the same method name, but the actual code that executes depends on which real object is inside. Tomorrow if you pass ContactTriggerHandler, the Contact version of beforeInsert runs — zero changes to the dispatcher.

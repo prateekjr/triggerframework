@@ -1,0 +1,13 @@
+public interface IBatchProcessor {
+    // SOQL query string for Database.getQueryLocator
+    String  getScope();
+
+    // Called once per chunk — your business logic lives here
+    void    process(List<SObject> records);
+
+    // Called once when all chunks are done
+    void    onFinish(Database.BatchableContext ctx);
+
+    // Optional: override default chunk size of 200
+    Integer getBatchSize();
+}

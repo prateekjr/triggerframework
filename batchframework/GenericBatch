@@ -1,0 +1,31 @@
+public class GenericBatch
+    implements Database.Batchable<SObject>,
+               Database.Stateful {
+
+    private IBatchProcessor processor;
+
+    public GenericBatch(IBatchProcessor processor) {
+        this.processor = processor;
+    }
+
+    public Database.QueryLocator start(
+            Database.BatchableContext ctx) {
+        return Database.getQueryLocator(processor.getScope());
+    }
+
+    public void execute(Database.BatchableContext ctx,
+                         List<SObject> scope) {
+        processor.process(scope);
+    }
+
+    public void finish(Database.BatchableContext ctx) {
+        processor.onFinish(ctx);
+    }
+
+    // Convenience launcher
+    public static Id launch(IBatchProcessor p) {
+        return Database.executeBatch(
+            new GenericBatch(p), p.getBatchSize()
+        );
+    }
+}

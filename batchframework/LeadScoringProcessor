@@ -1,0 +1,30 @@
+public class LeadScoringProcessor implements IBatchProcessor {
+
+    public String getScope() {
+        return 'SELECT Id, Email, LeadSource, Score__c '
+             + 'FROM Lead WHERE IsConverted = false';
+    }
+
+    public Integer getBatchSize() { return 100; }
+
+    public void process(List<SObject> records) {
+        List<Lead> leads = (List<Lead>) records;
+        for (Lead ld : leads) {
+            ld.Score__c = calculateScore(ld);
+        }
+        update leads;
+    }
+
+    public void onFinish(Database.BatchableContext ctx) {
+        // Optionally chain next batch job or send an email report
+        System.debug('Lead scoring complete: ' + ctx.getJobId());
+    }
+
+    private Integer calculateScore(Lead ld) {
+        Integer score = 0;
+        if (ld.Email != null)               score += 20;
+        if (ld.LeadSource == 'Web')         score += 30;
+        if (ld.LeadSource == 'Referral')    score += 50;
+        return score;
+    }
+}

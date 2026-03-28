@@ -1,0 +1,17 @@
+public class BatchJobScheduler implements Schedulable {
+
+    public void execute(SchedulableContext ctx) {
+        // Swap processor without touching the scheduler
+        IBatchProcessor processor = new LeadScoringProcessor();
+        GenericBatch.launch(processor);
+    }
+
+    // Schedule via Apex: runs every night at midnight
+    public static void scheduleNightly() {
+        System.schedule(
+            'Nightly Lead Scoring',
+            '0 0 0 * * ?',
+            new BatchJobScheduler()
+        );
+    }
+}
